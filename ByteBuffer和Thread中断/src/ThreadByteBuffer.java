@@ -4,6 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -178,26 +181,35 @@ public class ThreadByteBuffer {
 		
 		{
 			System.out.println();
+			int  video_frame_index = 100 ;
+			ByteBuffer snddata = ByteBuffer.allocateDirect(1300);
+			snddata.put(0, (byte) ( video_frame_index & 0x000000FF  )        );
+			snddata.put(1, (byte) ( (video_frame_index & 0x0000FF00 ) >> 8 ) );
+			snddata.put(2, (byte) ( (video_frame_index & 0x00FF0000 ) >> 16) );
+			snddata.put(3, (byte) ( (video_frame_index & 0xFF000000 ) >> 24) ); // 小端方式 
+			snddata.order( ByteOrder.LITTLE_ENDIAN );  
+			IntBuffer ibuf = snddata.asIntBuffer();
+			ibuf.put(1, 100);
+			System.out.println( String.format( "%x %x %x %x " , 
+								snddata.get(7) , snddata.get(6) , snddata.get(5) , snddata.get(4) )
+								); //  如果是 LILLTE_ENDIAN 0 0 0 64 ; 如果是 BIG_ENDIAN  64 0 0 0 
+			// 1300 0 1300  put不会影响 position 
+			System.out.println(" " + snddata.remaining() + " " + snddata.position() +  " " + snddata.capacity() );
 		}
 
-		int  video_frame_index = 100 ;
-		ByteBuffer snddata = ByteBuffer.allocateDirect(1300);
-		snddata.put(0, (byte) ( video_frame_index & 0x000000FF  )        );
-		snddata.put(1, (byte) ( (video_frame_index & 0x0000FF00 ) >> 8 ) );
-		snddata.put(2, (byte) ( (video_frame_index & 0x00FF0000 ) >> 16) );
-		snddata.put(3, (byte) ( (video_frame_index & 0xFF000000 ) >> 24) );
-
-		System.out.println(" " + snddata.remaining() + " " + snddata.position() +  " " + snddata.capacity() );
+		{
+			//String range = " npt= 0.000 -";
+			String range = " npt=   22.000   -";
+			 
+			int start = range.indexOf("=");
+			int end = range.indexOf("-");
+			String sub = (String) range.subSequence(start + 1, end);
+			System.out.println( sub );
+			float rangef = Float.parseFloat(sub) ;
+			System.out.println( rangef );;
+		}
 		
-		//String range = " npt= 0.000 -";
-		String range = " npt=   22.000   -";
-		 
-		int start = range.indexOf("=");
-		int end = range.indexOf("-");
-		String sub = (String) range.subSequence(start + 1, end);
-		System.out.println( sub );
-		float rangef = Float.parseFloat(sub) ;
-		System.out.println( rangef );;
+
 		
 		
 		ByteBuffer dbb = ByteBuffer.allocateDirect(10);
