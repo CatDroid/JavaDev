@@ -29,34 +29,29 @@ enum _MSG_TYPE {
 
 class Top
 {
-	private int m1 = 0 ;
-	private int m2 = 0; 
+	private int m1 = -12 ;
+	private int m2 = -13 ; 
 	
 	final public void setM(int x , int y){
-		System.out.println("Top> m1 " + m1 + " m2 " + m2 );
+		System.out.println("Top> m1 " + m1 + " m2 " + m2 ); // m1 -12 m2 -13 
 		m1 = x + 1; // 修改的是自己的m1 m2 不是继承类的
 		m2 = y + 1 ;
-		System.out.println("Top> m1 " + m1 + " m2 " + m2 );
+		System.out.println("Top> m1 " + m1 + " m2 " + m2 ); // m1 11 m2 16
 	}
 }
 
 class TopSub extends Top
 {
-	private int m1 = 0 ;
+	private int m1 = 0 ; // 在派生类范围内  覆盖掉基类的 
 	private int m2 = 0;
 	
-	public void set(int x , int y){
-		System.out.println("TopSub> m1 " + m1 + " m2 " + m2 );
+	public void set(int x , int y){ // p.set(10, 15);  
+		System.out.println("TopSub> m1 " + m1 + " m2 " + m2 ); // m1 0 m2 0   
 		m1 = x ; m2 = y;
 		setM(m1 , m2 );
-		System.out.println("TopSub> m1 " + m1 + " m2 " + m2 );
+		System.out.println("TopSub> m1 " + m1 + " m2 " + m2 ); // m1 10 m2 15
 	}
-	/*
-		TopSub> m1 0 m2 0
-		Top> m1 0 m2 0
-		Top> m1 11 m2 16
-		TopSub> m1 10 m2 15
-	 */
+
 }
 
 
@@ -156,9 +151,11 @@ public class ThreadByteBuffer {
 			}
 		}
 		
-		
-		TopSub p = new TopSub();
-		p.set(10, 15);
+		{
+			TopSub p = new TopSub();
+			p.set(10, 15);
+		}
+
 		
 		byte[] src = new byte[20] ;
 		
