@@ -210,21 +210,23 @@ public class ThreadByteBuffer {
 		}
 		
 
+		{
+			ByteBuffer dbb = ByteBuffer.allocateDirect(10);
+			dbb.put((byte) 0);
+			dbb.put((byte) 0);
+			dbb.put((byte) 0);
+			dbb.put((byte) 0);
+			dbb.put((byte) 0);
+			dbb.put((byte) 0);
+			dbb.put((byte) 0);
+			dbb.put((byte) 0);
+			dbb.put((byte) 0);
+			dbb.put((byte) 0);
+			System.out.println(">>>> " + dbb.position());;
+			//dbb.put((byte) 0); // java.nio.BufferOverflowException	
+		}
 		
-		
-		ByteBuffer dbb = ByteBuffer.allocateDirect(10);
-		dbb.put((byte) 0);
-		dbb.put((byte) 0);
-		dbb.put((byte) 0);
-		dbb.put((byte) 0);
-		dbb.put((byte) 0);
-		dbb.put((byte) 0);
-		dbb.put((byte) 0);
-		dbb.put((byte) 0);
-		dbb.put((byte) 0);
-		dbb.put((byte) 0);
-		System.out.println(">>>> " + dbb.position());;
-		//dbb.put((byte) 0); // java.nio.BufferOverflowException
+
 		
 
 		ArrayList<ByteBuffer> direct_array  = new ArrayList<ByteBuffer>();
