@@ -108,6 +108,7 @@ public class ThreadByteBuffer {
 		}
 
 		{
+			System.out.println();
 			try {
 				FileInputStream inputstream;
 				inputstream = new FileInputStream("text.txt");
@@ -152,21 +153,32 @@ public class ThreadByteBuffer {
 		}
 		
 		{
+			System.out.println();
 			TopSub p = new TopSub();
 			p.set(10, 15);
 		}
 
+		{
+			System.out.println();
+			byte[] src = new byte[20] ;
+			ByteBuffer dest = ByteBuffer.allocateDirect(100);
+			dest.put(src, 0, src.length ) ;  // put()  拷贝数据到byte[] :  从当前ByteBuffer.position开始，填充数据 到src的offset开始处， 修改ByteBuffer.postion
+			System.out.println("ByteBuffer.put(byte[] src, int offset, int length) " + dest.position() ) ; // 20 
+			
+			ByteBuffer destShared = dest.duplicate() ;	// 共享buffer 但是 position limit mark 独立  ,新Buffer的postion初始值 为原buffer的postion当前值
+			System.out.println("Shared ByteBuffer postioin(independent) after just initialize " + destShared.position()  ) ; // 20 
+			
+			dest.put(0, (byte) 12) ; 		//  put()  buffer指定位置写入值 :  不管当前postion 索引从buffer的0开始 不修改postion
+			System.out.println("ByteBuffer.put(int index, int length) " + dest.position() ) ; 	// 20 
+			System.out.println("                                      " + dest.get(0) ) ; 		// 12 
+			
+			System.out.println("Shared ByteBuffer postioin(independent) " + destShared.position()  ) ; // 0 
+			System.out.println("Shared ByteBuffer postioin(independent) " + destShared.get(0)  ) ;     // 12
+		}
 		
-		byte[] src = new byte[20] ;
-		
-		ByteBuffer dest = ByteBuffer.allocateDirect(100);
-		ByteBuffer destShared = dest.duplicate() ;
-		dest.put(src, 0, src.length ) ;  // 从当前position开始  修改postion
-		System.out.println("ByteBuffer.put(byte[] src, int offset, int length) " + dest.position() ) ;
-		dest.put(0, (byte) 12) ; // 不管当前postion 索引从buffer的0开始
-		System.out.println("ByteBuffer.put(int index, byte b) alway start from  0 : " + dest.get(0) ) ;
-		System.out.println("Shared ByteBuffer postioin(independent) " + destShared.position()  ) ;
-		System.out.println("Shared ByteBuffer postioin(independent) " + destShared.get(0)  ) ;
+		{
+			System.out.println();
+		}
 
 		int  video_frame_index = 100 ;
 		ByteBuffer snddata = ByteBuffer.allocateDirect(1300);
