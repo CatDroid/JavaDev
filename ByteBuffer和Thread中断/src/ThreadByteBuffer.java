@@ -34,7 +34,7 @@ class Top
 	
 	final public void setM(int x , int y){
 		System.out.println("Top> m1 " + m1 + " m2 " + m2 );
-		m1 = x + 1; // ĞŞ¸ÄµÄÊÇ×Ô¼ºµÄm1 m2 ²»ÊÇ¼Ì³ĞÀàµÄ
+		m1 = x + 1; // ä¿®æ”¹çš„æ˜¯è‡ªå·±çš„m1 m2 ä¸æ˜¯ç»§æ‰¿ç±»çš„
 		m2 = y + 1 ;
 		System.out.println("Top> m1 " + m1 + " m2 " + m2 );
 	}
@@ -100,48 +100,62 @@ public class ThreadByteBuffer {
 	
 	public static void main(String args[]) { 
 		
-		// XXX.class.isInstance(obj) ¶ÔÏóÄÜ²»ÄÜ±»×ª»¯ÎªÕâ¸öÀà
-		// 1. Ò»¸ö¶ÔÏóÊÇ±¾ÉíÀàXXX.classµÄÒ»¸ö¶ÔÏó 
-		// 2. Ò»¸ö¶ÔÏóÄÜ±»×ª»¯Îª »ùÀà»òÕß ½Ó¿Ú
-		// 3. ËùÓĞ¶ÔÏó¶¼ÄÜ×ªÎªObject 
-		// 4. XXX.class.isInstance(null) ×ÜÊÇfalse NULL¶ÔÏó²»ÄÜ×ª»»³ÉÈÎºÎÀà
-		Main main = new Second();
-		System.out.println( "Third "	+ Third.class.isInstance(main) );	// false
-		System.out.println( "Second "	+ Second.class.isInstance(main) );  // true   
-		System.out.println( "Main "		+ Main.class.isInstance(main) );	// true  ±¾Àà¼°ÆäÅÉÉúÀà   
-		
-		try {
-			FileInputStream inputstream;
-			inputstream = new FileInputStream("C:\\Users\\rd0394\\Desktop\\vrcamera_lut__\\rightlut.dat");
-		 
-			
-			byte[] buffer = new byte[100];
-			FileChannel channel = inputstream.getChannel();
-			System.out.println("before channel position is " +channel.position() + ", available = " + inputstream.available()  );
-			int read=inputstream.read(buffer);
-			System.out.println("after read by FileInputStream " + read + ", channel position is " + channel.position() );
-		
-			ByteBuffer rdBuffer = ByteBuffer.allocateDirect(213);
-			rdBuffer.clear(); read = channel.read(rdBuffer); rdBuffer.flip();
-			System.out.println("after read by FileChannel " + read + ", channel position is " + channel.position() );
-			
-			//byte[] array = rdBuffer.array();
-			//rdBuffer.arrayOffset() ;
-			
-			channel.close();
-			inputstream.close();
-			
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			System.out.println("ERROR " +  e1.getMessage() );
-			return ;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.out.println("ERROR " +  e.getMessage() );
-			return ;
+		{
+			// XXX.class.isInstance(obj) å¯¹è±¡èƒ½ä¸èƒ½è¢«è½¬åŒ–ä¸ºè¿™ä¸ªç±»
+			// 1. ä¸€ä¸ªå¯¹è±¡æ˜¯æœ¬èº«ç±»XXX.classçš„ä¸€ä¸ªå¯¹è±¡ 
+			// 2. ä¸€ä¸ªå¯¹è±¡èƒ½è¢«è½¬åŒ–ä¸º åŸºç±»æˆ–è€… æ¥å£
+			// 3. æ‰€æœ‰å¯¹è±¡éƒ½èƒ½è½¬ä¸ºObject 
+			// 4. XXX.class.isInstance(null) æ€»æ˜¯false NULLå¯¹è±¡ä¸èƒ½è½¬æ¢æˆä»»ä½•ç±»
+			Main main = new Second();
+			System.out.println( "Third "	+ Third.class.isInstance(main) );	// false
+			System.out.println( "Second "	+ Second.class.isInstance(main) );  // true   
+			System.out.println( "Main "		+ Main.class.isInstance(main) );	// true  æœ¬ç±»åŠå…¶æ´¾ç”Ÿç±»   		
 		}
+
+		{
+			try {
+				FileInputStream inputstream;
+				inputstream = new FileInputStream("text.txt");
+			 
+				// inputstream.skip(n)
+				// inputstream.mark(n) 
+				// 	å¸Œæœ›åœ¨è¯»å‡ºè¿™ä¹ˆå¤šä¸ªå­—ç¬¦ä¹‹å‰ï¼Œè¿™ä¸ªmarkä¿æŒæœ‰æ•ˆ
+				//	è¯»è¿‡è¿™ä¹ˆå¤šå­—ç¬¦ä¹‹å  ç³»ç»Ÿå¯ä»¥ä½¿markä¸å†æœ‰æ•ˆ  è€Œä½ ä¸èƒ½è§‰å¾—å¥‡æ€ªæˆ–æ€ªç½ªå®ƒ
+				// 	è¿™è·Ÿbufferæœ‰å…³ï¼Œå¦‚æœä½ éœ€è¦å¾ˆé•¿çš„è·ç¦»ï¼Œé‚£ä¹ˆç³»ç»Ÿå°±å¿…é¡»åˆ†é…å¾ˆå¤§çš„bufferæ¥ä¿æŒä½ çš„mark
+				//  mark(10) é‚£ä¹ˆåœ¨read()10ä¸ªä»¥å†…çš„å­—ç¬¦æ—¶  reset() æ“ä½œåå¯ä»¥é‡æ–°è¯»å–å·²ç»è¯»å‡ºçš„æ•°æ®
+				//  å¦‚æœå·²ç»è¯»å–çš„æ•°æ®è¶…è¿‡10ä¸ªï¼Œé‚£reset()æ“ä½œåï¼Œå°±ä¸èƒ½æ­£ç¡®è¯»å–ä»¥å‰çš„æ•°æ®äº†ï¼Œå› ä¸ºæ­¤æ—¶markæ ‡è®°å·²ç»å¤±æ•ˆ
+				// inputstream.reset()
+				
+				// FileChannel å’Œ FileStream è¯»æ“ä½œéƒ½ä¼šå½±å“å½“å‰ä½ç½® 
+				
+				byte[] buffer = new byte[100];
+				FileChannel channel = inputstream.getChannel();
+				System.out.println( String.format("before channel position is %d , available =  %d ", 
+													channel.position() ,  inputstream.available()   )  ) ; // 0 112 
+
+				int read=inputstream.read(buffer);
+				System.out.println( String.format("after read (%d) by FileInputStream  channel position is %d , available =  %d ", 
+						read, channel.position() ,  inputstream.available()   )  ) ;  // read 100 pos 100 avail 12 
+			
+				ByteBuffer rdBuffer = ByteBuffer.allocateDirect(213);
+				rdBuffer.clear(); read = channel.read(rdBuffer); rdBuffer.flip();
+				System.out.println( String.format("after read by (%d) FileChannel channel position is %d , available =  %d ", 
+						read, channel.position() ,  inputstream.available()   )  ) ;  //  read 12 pos 112 avail  0 
+				
+				channel.close();
+				inputstream.close();
+				
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+				System.out.println("ERROR " +  e1.getMessage() );
+				return ;
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.out.println("ERROR " +  e.getMessage() );
+				return ;
+			}
+		}
+		
 		
 		TopSub p = new TopSub();
 		p.set(10, 15);
@@ -150,9 +164,9 @@ public class ThreadByteBuffer {
 		
 		ByteBuffer dest = ByteBuffer.allocateDirect(100);
 		ByteBuffer destShared = dest.duplicate() ;
-		dest.put(src, 0, src.length ) ;  // ´Óµ±Ç°position¿ªÊ¼  ĞŞ¸Äpostion
+		dest.put(src, 0, src.length ) ;  // ä»å½“å‰positionå¼€å§‹  ä¿®æ”¹postion
 		System.out.println("ByteBuffer.put(byte[] src, int offset, int length) " + dest.position() ) ;
-		dest.put(0, (byte) 12) ; // ²»¹Üµ±Ç°postion Ë÷Òı´ÓbufferµÄ0¿ªÊ¼
+		dest.put(0, (byte) 12) ; // ä¸ç®¡å½“å‰postion ç´¢å¼•ä»bufferçš„0å¼€å§‹
 		System.out.println("ByteBuffer.put(int index, byte b) alway start from  0 : " + dest.get(0) ) ;
 		System.out.println("Shared ByteBuffer postioin(independent) " + destShared.position()  ) ;
 		System.out.println("Shared ByteBuffer postioin(independent) " + destShared.get(0)  ) ;
@@ -195,8 +209,8 @@ public class ThreadByteBuffer {
 		ArrayList<ByteBuffer> direct_array  = new ArrayList<ByteBuffer>();
 		
 		for(int j = 0 ; j < 257 ; j++){
-			ByteBuffer bbu = ByteBuffer.allocateDirect(1000000); // Ò²»áµ¼ÖÂ OOM Davlik Heap³¬¹ı256 ?? ÎªÊ²Ã´ÊÇÔÚDavlik ¶ø²»ÊÇ Native Heap ??
-			//ByteBuffer bbu = ByteBuffer.allocate(1000000); // ¶¼»áµ¼ÖÂ java.lang.OutOfMemoryError
+			ByteBuffer bbu = ByteBuffer.allocateDirect(1000000); // ä¹Ÿä¼šå¯¼è‡´ OOM Davlik Heapè¶…è¿‡256 ?? ä¸ºä»€ä¹ˆæ˜¯åœ¨Davlik è€Œä¸æ˜¯ Native Heap ??
+			//ByteBuffer bbu = ByteBuffer.allocate(1000000); // éƒ½ä¼šå¯¼è‡´ java.lang.OutOfMemoryError
 			System.out.println( "bbu direct = " + bbu.isDirect() + " j = " + j );
 			byte[] bba = bbu.array();
 			bba[0] = 1 ;
@@ -253,7 +267,7 @@ public class ThreadByteBuffer {
 		
 		byte[] arr = allocate.array();
 		System.out.println("1 array " + Arrays.toString( arr ));
-		arr[0] = 18 ; // »áÖ±½ÓĞŞ¸ÄByteBufferÀïÃæµÄÊı¾İ
+		arr[0] = 18 ; // ä¼šç›´æ¥ä¿®æ”¹ByteBufferé‡Œé¢çš„æ•°æ®
 		System.out.println("2 array " + Arrays.toString( arr ));
 		
 		 
@@ -320,13 +334,13 @@ public class ThreadByteBuffer {
 				while( i-- != 0 ){
 					try {
 						sleep(2000);
-						// Thread.interrupted()¼ÙÈçµ±Ç°µÄÖĞ¶Ï±êÖ¾Îªtrue£¬Ôòµ÷Íêºó»á½«ÖĞ¶Ï±êÖ¾Î»ÉèÖÃ³Éfalse
-						// Çå³ıÖĞ¶Ï±ê¼Ç ·µ»ØÔ­À´ÖĞ¶Ï×´Ì¬
+						// Thread.interrupted()å‡å¦‚å½“å‰çš„ä¸­æ–­æ ‡å¿—ä¸ºtrueï¼Œåˆ™è°ƒå®Œåä¼šå°†ä¸­æ–­æ ‡å¿—ä½è®¾ç½®æˆfalse
+						// æ¸…é™¤ä¸­æ–­æ ‡è®° è¿”å›åŸæ¥ä¸­æ–­çŠ¶æ€
 						System.out.println(" i " + i + " interrupted ? " +  this.isInterrupted()  );
 					} catch (InterruptedException e) {
-						//	sleepÅ×³öÒì³£ºó Interrputed×´Ì¬±ê¼ÇÒ²»áÇå³ı
-						//	µ±ÓĞ±ğµÄÏß³Ìµ÷ÓÃÁË±¾Ïß³ÌµÄinterrupt( )Ê±  »áÉèÖÃÒ»¸ö±ê¼ÇÒÔ±íÊ¾Õâ¸öÕâ¸öÏß³Ì±»´ò¶ÏÁË
-						//	µ±±¾Ïß³Ì²¶»ñÕâ¸öÒì³£µÄÊ±ºò£¬»áÇå³ıÕâ¸ö±êÖ¾  ËùÒÔcatchÓï¾ä»áÓÀÔ¶±¨¸æËµisInterrupted( )ÊÇfalse
+						//	sleepæŠ›å‡ºå¼‚å¸¸å InterrputedçŠ¶æ€æ ‡è®°ä¹Ÿä¼šæ¸…é™¤
+						//	å½“æœ‰åˆ«çš„çº¿ç¨‹è°ƒç”¨äº†æœ¬çº¿ç¨‹çš„interrupt( )æ—¶  ä¼šè®¾ç½®ä¸€ä¸ªæ ‡è®°ä»¥è¡¨ç¤ºè¿™ä¸ªè¿™ä¸ªçº¿ç¨‹è¢«æ‰“æ–­äº†
+						//	å½“æœ¬çº¿ç¨‹æ•è·è¿™ä¸ªå¼‚å¸¸çš„æ—¶å€™ï¼Œä¼šæ¸…é™¤è¿™ä¸ªæ ‡å¿—  æ‰€ä»¥catchè¯­å¥ä¼šæ°¸è¿œæŠ¥å‘Šè¯´isInterrupted( )æ˜¯false
 						System.out.println("Thread.interrupted() ? " + this.isInterrupted());
 						e.printStackTrace();
 					}
