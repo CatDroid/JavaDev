@@ -203,10 +203,10 @@ public class ThreadByteBuffer {
 			 
 			int start = range.indexOf("=");
 			int end = range.indexOf("-");
-			String sub = (String) range.subSequence(start + 1, end);
-			System.out.println( sub );
+			String sub = (String) range.subSequence(start + 1, end); // [startIndex, endIndex)
+			System.out.println( "=与-之间的子串:" + sub );
 			float rangef = Float.parseFloat(sub) ;
-			System.out.println( rangef );;
+			System.out.println( "解析出浮点数 :" + rangef );;
 		}
 		
 
