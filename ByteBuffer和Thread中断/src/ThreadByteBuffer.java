@@ -239,9 +239,9 @@ public class ThreadByteBuffer {
 		}
 
 		{
-			// 在Android 上 ByteBuffer.allocateDirect 是分配到 Dalvik Heap上的 , Native Heap不会改变 
+			// 在Android 上 ByteBuffer.allocateDirect 是分配到 Dalvik Heap上的 , Native Heap不会增长
 			ArrayList<ByteBuffer> direct_array  = new ArrayList<ByteBuffer>();
-			for(int j = 0 ; j < 2048 ; j++){
+			for(int j = 0 ; j < 10 /*2048*/ ; j++){
 				ByteBuffer bbu = ByteBuffer.allocateDirect(10000000); // 导致 java.lang.OutOfMemoryError: Direct buffer memory
 				//ByteBuffer bbu = ByteBuffer.allocate(10000000); 	  // 导致  java.lang.OutOfMemoryError: Java heap space
 				direct_array.add(bbu);
@@ -257,10 +257,12 @@ public class ThreadByteBuffer {
 			}
 		}
 		
-		{
-			for( int n = 0 ; n < 10000 ; n ++ ){
-				ByteBuffer mall = ByteBuffer.allocateDirect(1000000);
+		{	// ByteBuffer.allocateDirect 不用自己回收  没有引用自动释放 
+			System.out.println("allocateDirect loop Entry ");
+			for( int n = 0 ; n < 2048 ; n ++ ){
+				ByteBuffer mall = ByteBuffer.allocateDirect(10000000);
 			}	
+			System.out.println("allocateDirect loop Done ");
 		}
 		
 		{
