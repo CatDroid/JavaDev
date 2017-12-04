@@ -324,22 +324,29 @@ public class ThreadByteBuffer {
 		
 		{
 			ByteBuffer allocate = ByteBuffer.allocate(20);
-			System.out.println("1 pos " + allocate.position() 
-									+ " remain " + allocate.remaining() 
-									+ " limit " + allocate.limit() 
-									+ " cap " + allocate.capacity() );
+			// allocate.clear(); // 刚刚allocate之后,不需要clear()
+			System.out.println( 
+					String.format("1 pos %d remain %d limit %d cap %d ",
+							allocate.position() ,
+							allocate.remaining() ,
+							allocate.limit() ,
+							allocate.capacity() )  ); 	// 1 pos 0 remain 20 limit 20 cap 20 
+ 
 			allocate.put((byte) 12) ;
 			allocate.put((byte) 13) ;
-			System.out.println("2 pos " + allocate.position() 
-									+ " remain " + allocate.remaining() 
-									+ " limit " + allocate.limit() 
-									+ " cap " + allocate.capacity() );
+			System.out.println( 
+					String.format("2 pos %d remain %d limit %d cap %d ",
+							allocate.position() ,
+							allocate.remaining() ,
+							allocate.limit() ,
+							allocate.capacity() )  );	// 2 pos 2 remain 18 limit 20 cap 20 
 			
 			byte[] arr = allocate.array();
 			System.out.println("1 array " + Arrays.toString( arr ));
-			arr[0] = 18 ; // 会直接修改ByteBuffer里面的数据
+			System.out.println("1 buffer.get(1) " + allocate.get(1) ); // 13 
+			arr[1] = 18 ; // 会直接修改ByteBuffer里面的数据
 			System.out.println("2 array " + Arrays.toString( arr ));
-			
+			System.out.println("2 buffer.get(1) " + allocate.get(1) ); // 18 
 		}
 		
 		
