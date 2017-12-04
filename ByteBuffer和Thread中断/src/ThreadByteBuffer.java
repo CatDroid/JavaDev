@@ -457,27 +457,28 @@ public class ThreadByteBuffer {
 		}
  		
 		{
-	 		final Thread th1 = new Thread(){
+	 		final Thread thA = new Thread(){
 
 				@Override
 				public void run() {
 					
-					this.interrupt();
-					System.out.println(" this.isInterrupted()  " + this.isInterrupted()  );
-					System.out.println(" interrupted ? " +  Thread.interrupted()  );
-				
+					this.interrupt();  // 自己产生对自己的中断
+					System.out.println("THREAD[A] this.isInterrupted()  " + this.isInterrupted()  ); // true 
+					System.out.println("THREAD[A] interrupted ? " +  Thread.interrupted()  ); // 这句话会清除中断状态
+					System.out.println("THREAD[A] this.isInterrupted()  " + this.isInterrupted()  ); // false 
+					
 					int i = 5; 
 					while( i-- != 0 ){
 						try {
 							sleep(2000);
 							// Thread.interrupted()假如当前的中断标志为true，则调完后会将中断标志位设置成false
 							// 清除中断标记 返回原来中断状态
-							System.out.println(" i " + i + " interrupted ? " +  this.isInterrupted()  );
+							System.out.println("THREAD[A] i " + i + " interrupted ? " +  this.isInterrupted()  );
 						} catch (InterruptedException e) {
 							//	sleep抛出异常后 Interrputed状态标记也会清除
-							//	当有别的线程调用了本线程的interrupt( )时  会设置一个标记以表示这个这个线程被打断了
+							//	当有别的线程调用了本线程的interrupt()时,会设置一个标记以表示这个这个线程被打断了
 							//	当本线程捕获这个异常的时候，会清除这个标志  所以catch语句会永远报告说isInterrupted( )是false
-							System.out.println("Thread.interrupted() ? " + this.isInterrupted());
+							System.out.println("THREAD[A] after Exception Thread.interrupted() ? " + this.isInterrupted());
 							e.printStackTrace();
 						}
 					}
@@ -485,19 +486,18 @@ public class ThreadByteBuffer {
 				}
 	 			
 	 		};
-	 		th1.start();
+	 		thA.start();
 	 		
-	 		new Thread(){
+	 		new Thread(){ // 用来 休眠3秒后, interrupt上面的线程 
 	 			@Override
 				public void run() {
 	 				try {
 						sleep(3000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-	 				th1.interrupt();
-	 				System.out.println("th1.interrupted() ? " + th1.isInterrupted());
+	 				thA.interrupt();
+	 				System.out.println("THREAD[B] th1.interrupted() ? " + thA.isInterrupted());
 	 				
 	 			}
 	 		}.start();
