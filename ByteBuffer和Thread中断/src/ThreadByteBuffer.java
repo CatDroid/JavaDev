@@ -280,7 +280,7 @@ public class ThreadByteBuffer {
 			
 		}
 		
-		{
+		{	// byte[] 数组  转成  hex 显示
 			byte[] test_sps = new byte[]{0,1,78,48,47};
 			System.out.println("" + byteArray2Hex(test_sps) );
 		}
