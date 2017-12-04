@@ -391,7 +391,9 @@ public class ThreadByteBuffer {
 		}
 		
 		{
-	 		byte[] temp = new byte[]{ 0x68,(byte) 0xca,0x43,(byte) 0xc8 };	
+			// 对于byte[] 只要最高bit不是1，就不用(byte)强制转换，最高位为1会变成负数    byte相当于signed char 
+	 		byte[] temp = new byte[]{ 0x68,(byte) 0xca,0x43,(byte) 0x80,  0x7F  };	
+	 		System.out.println("temp[1] = " + temp[1] ); // temp[1] = -54 
 		}
 		
 		{
