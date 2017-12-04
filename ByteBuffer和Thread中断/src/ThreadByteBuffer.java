@@ -352,15 +352,33 @@ public class ThreadByteBuffer {
 		
 		{
 			ByteBuffer bb = ByteBuffer.wrap( new byte[]{0,1,2,3,4,5,6} ) ;
-			Iterator i ;
-			bb.position(4);
-			byte[] bbarray =   bb.array() ;
-	        byte[] data = new byte[bb.remaining()];
+			bb.position(4);					// 不会影响 ByteBuffer.array() 但是会影响 position()和remaining() 
+			byte[] bbarray =  bb.array() ;
+			int offset = bb.arrayOffset() ; // ByteBuffer转成 byte[]数组之后,有可能第一个byte数组元素,不一定是有效数据 
+			System.out.println("ByteBuffer (wrap byte[]) -> position(4) -> array() >>> " 
+								+  Arrays.toString(bbarray)  	// [0, 1, 2, 3, 4, 5, 6]
+								+ " arrayOffset: " + offset 	// arrayOffset: 0 
+							); 
+			
+			System.out.println( 
+					String.format("ByteBuffer pos %d remain %d limit %d cap %d ",
+									bb.position() ,
+									bb.remaining() ,
+									bb.limit() ,
+									bb.capacity() )  ); // pos 4 remain 3 limit 7 cap 7 
+			
+			// 正常从写入到读取 之间 要用 flip()   把 remaining/limit设置为当前(写入状态)的position  position设置为0 mark无效 
+		 
+	        byte[] data = new byte[bb.remaining()];		// 这里是读  读取剩余数据 到byte[] 受到当前position remaining limit的限制
 	        bb.get(data, 0, bb.remaining());
-	        Map.Entry m;
-
-			System.out.println("Hello World!" +  Arrays.toString(bbarray)); 
-	 		System.out.println("= " + Arrays.toString( data ));
+			System.out.println( 
+					String.format("ByteBuffer after get pos %d remain %d limit %d cap %d ",
+									bb.position() ,
+									bb.remaining() ,
+									bb.limit() ,
+									bb.capacity() )  ); // pos 7 remain 0 limit 7 cap 7 
+			
+	 		System.out.println("= " +  Arrays.toString( data )); // = [4, 5, 6]
 		}
 		
 	
