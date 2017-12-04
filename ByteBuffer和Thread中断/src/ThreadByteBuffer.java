@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 enum _MSG_TYPE {
-	MSG_TYPE_STATUS  ,
+	MSG_TYPE_STATUS  , // 0 
 	MSG_TYPE_H264_DATA,
 	MSG_TYPE_YUV_DATA,
 	MSG_TYPE_RGB_DATA,
@@ -400,10 +400,31 @@ public class ThreadByteBuffer {
 	 		int cast = 5;
 	 		switch(_MSG_TYPE.values()[cast]){ // 整型 --> enum 
 	 		case MSG_TYPE_STATUS:
+	 			System.out.println("Integer -> Enum MSG_TYPE_STATUS ");
+	 			break;
+	 		case MSG_TYPE_H264_DATA:
+	 			System.out.println("Integer -> Enum MSG_TYPE_H264_DATA ");
+	 			break;
+	 		case MSG_TYPE_YUV_DATA:
+	 			System.out.println("Integer -> Enum MSG_TYPE_YUV_DATA ");
+	 			break;
+	 		case MSG_TYPE_RGB_DATA:
+	 			System.out.println("Integer -> Enum MSG_TYPE_RGB_DATA ");
+	 			break;
+	 		case MSG_TYPE_PCM_DATA:
+	 			System.out.println("Integer -> Enum MSG_TYPE_PCM_DATA ");
+	 			break;
+	 		case MSG_TYPE_VOD_CURRENT_POSITION:
+	 			System.out.println("Integer -> Enum MSG_TYPE_VOD_CURRENT_POSITION ");
 	 			break;
 	 		default:
 	 			break;
-	 		}
+	 		}// Integer -> Enum MSG_TYPE_VOD_CURRENT_POSITION
+	 		
+	 		_MSG_TYPE my_enum = _MSG_TYPE.MSG_TYPE_STATUS;
+	 		
+	 		System.out.println("Enum -> Integer  " + my_enum.ordinal()  );
+	 		
 		}
  	
 
