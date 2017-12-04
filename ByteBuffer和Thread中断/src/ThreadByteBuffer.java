@@ -382,18 +382,26 @@ public class ThreadByteBuffer {
 		}
 		
 	
+		{	// Integer.parseInt必须是整个都是整型  Float.parseFloat可以前后带空格
+	 		//int abc = Integer.parseInt("1080p"); 			// throws NumberFormatException
+			//int abc = Integer.parseInt(" 1080  ");		// throws NumberFormatException
+			int abc = Integer.parseInt("1080");				// OK	
+	 		//float abc = Float.parseFloat(" 1080.0  " ); 	// OK
+			System.out.println("abc = " + abc );
+		}
+		
 		{
-	 		int abc = Integer.parseInt("1080p");
-
-	 		byte[] temp = new byte[]{ 0x68,(byte) 0xca,0x43,(byte) 0xc8 };
-	 		 
+	 		byte[] temp = new byte[]{ 0x68,(byte) 0xca,0x43,(byte) 0xc8 };	
+		}
+		
+		{
 	 		int cast = 5;
 	 		switch(_MSG_TYPE.values()[cast]){
 	 		case MSG_TYPE_STATUS:
 	 			break;
 	 		default:
 	 			break;
-	 		}	
+	 		}
 		}
  	
 
