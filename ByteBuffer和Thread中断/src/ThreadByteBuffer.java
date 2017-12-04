@@ -265,10 +265,10 @@ public class ThreadByteBuffer {
 			System.out.println("allocateDirect loop Done ");
 		}
 		
-		{
+		{	// “带当前时间”的文件名字生成方法 
 			SimpleDateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 			String file_uri = String.format("/mnt/sdcard/%s.mp4",   df.format(new Date())  ) ;   
-			System.out.println("ll " + file_uri ); 
+			System.out.println("文件名字生成: " + file_uri );  // /mnt/sdcard/2017_12_04_10_38_50.mp4
 		}
 
 		{
