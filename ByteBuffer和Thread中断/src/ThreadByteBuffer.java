@@ -430,27 +430,30 @@ public class ThreadByteBuffer {
 
 		{
 			List<Integer> mList = new LinkedList<Integer>();
-	 		mList.add(1);
+	 		mList.add(1); // 先add进去的是index=0
 	 		mList.add(2);
 	 		mList.add(3);
 	 		mList.add(4);
 	 		
 	 		System.out.println("total");
 	 		for(Integer loo : mList){
-	 			System.out.println(" loo " + loo);
+	 			System.out.print( loo + "," );
 	 		}
+	 		System.out.println(); // 1,2,3,4,
 	 		
-	 		System.out.println("after remove 0 ");
+	  
+	 		int remove  = mList.remove(0);
+	 		System.out.println("remove(0) " + remove ); // 1 
+	 		for(Integer loo : mList){
+	 			System.out.print( loo + "," ); // 2,3,4,
+	 		}
+	 		System.out.println();
+	 		
 	 		mList.remove(0);
 	 		for(Integer loo : mList){
-	 			System.out.println(" loo " + loo);
+	 			System.out.print( loo + "," ); // 3,4,
 	 		}
-	 		
-	 		System.out.println("after remove 0 ");
-	 		mList.remove(0);
-	 		for(Integer loo : mList){
-	 			System.out.println(" loo " + loo);
-	 		}
+	 		System.out.println();
 		}
  		
 		{
