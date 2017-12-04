@@ -288,14 +288,37 @@ public class ThreadByteBuffer {
 		
 		{
 			ByteBuffer directbb = ByteBuffer.allocateDirect(10);
-			directbb.put((byte) 18);
-			directbb.flip();
-			System.out.println("bb = " + directbb.get(0)) ;
+			// channel-read和put(把数据放到ByteBuffer中) 之前需要clear()  position设置为0  limit是容量  mark被抛弃
+			directbb.clear(); 				// 准备"写数据到ByteBuffer" 
+			directbb.put((byte) 18);		// 会影响postion
+			directbb.put((byte) 12);
+			System.out.println( String.format("before flip: capacity %d remaining %d limit %d ",
+					directbb.capacity(),
+					directbb.remaining(),
+					directbb.limit()
+					)); // capacity 10 remaining 8 limit 10
 			
-			ByteBuffer bbtemp = ByteBuffer.allocate(directbb.remaining());
-			bbtemp.put(directbb);
-			bbtemp.flip();
-			System.out.println("bb = " + bbtemp.get(0)) ;	
+			// channel-wirte和get(把数据从ByteBuffer移出来)  limit设置为当前 position  position设置为0 容量  mark被抛弃
+			directbb.flip();  				  // 准备读 
+			System.out.println("directbb = " + directbb.get(0)) ; // 18  ByteBuffer.get(index) 不会影响postion 
+			System.out.println( String.format("after flip  : capacity %d remaining %d limit %d ",
+					directbb.capacity(),
+					directbb.remaining(),
+					directbb.limit()
+					)); // capacity 10 remaining 2 limit 2 
+			
+			
+			ByteBuffer bbtemp = ByteBuffer.allocate(directbb.remaining()); // 2 
+			System.out.println( String.format("拷贝到另外一个ByteBuffer  : capacity %d remaining %d limit %d ",
+					bbtemp.capacity(),
+					bbtemp.remaining(), // clear之后，开始写入数据到ByteBuffer(channel-read)  代表 还有多少有限数据 
+					bbtemp.limit()		// flip之后，开始从ByteBuffer读取数据(channel-write) 代表 还有剩余空闲空间 
+										// 调用clear和flip都会discard mark
+										// mark和reset配合使用
+					)); // capacity 2 remaining 2 limit 2 
+	 
+			bbtemp.put(directbb); // put DirecBuffer 
+			System.out.println("bbtemp = " + bbtemp.get(0)) ;	 // 18 
 		}
 	
 		
