@@ -398,7 +398,7 @@ public class ThreadByteBuffer {
 		
 		{
 	 		int cast = 5;
-	 		switch(_MSG_TYPE.values()[cast]){
+	 		switch(_MSG_TYPE.values()[cast]){ // 整型 --> enum 
 	 		case MSG_TYPE_STATUS:
 	 			break;
 	 		default:
