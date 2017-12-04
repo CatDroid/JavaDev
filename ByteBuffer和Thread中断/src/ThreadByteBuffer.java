@@ -80,7 +80,7 @@ public class ThreadByteBuffer {
 	public static void getSPS(byte[] sps){
 		if(sps == null){
 			System.out.println("empty arg input ");
-			sps = new byte[10];
+			sps = new byte[10]; // 不会修改 调用函数者给的byte[]实参 
 		}else{
 			System.out.println("full arg input ");
 		}
@@ -257,12 +257,13 @@ public class ThreadByteBuffer {
 			}
 		}
 		
-		{	// ByteBuffer.allocateDirect 不用自己回收  没有引用自动释放 
-			System.out.println("allocateDirect loop Entry ");
-			for( int n = 0 ; n < 2048 ; n ++ ){
-				ByteBuffer mall = ByteBuffer.allocateDirect(10000000);
-			}	
-			System.out.println("allocateDirect loop Done ");
+		{	// ByteBuffer.allocateDirect 不用自己回收  没有引用自动释放
+			
+//			System.out.println("allocateDirect loop Entry ");
+//			for( int n = 0 ; n < 2048 ; n ++ ){
+//				ByteBuffer mall = ByteBuffer.allocateDirect(10000000);
+//			}	
+//			System.out.println("allocateDirect loop Done ");
 		}
 		
 		{	// “带当前时间”的文件名字生成方法 
@@ -274,9 +275,12 @@ public class ThreadByteBuffer {
 		{
 			byte[] my_sps = null;
 			System.out.println("before getSPS my_sps = " + my_sps );
-			getSPS(my_sps);
-			System.out.println("after getSPS my_sps = " + my_sps );
+			getSPS(my_sps); 
+			System.out.println("after getSPS my_sps = " + my_sps ); // 依旧是空的
 			
+		}
+		
+		{
 			byte[] test_sps = new byte[]{0,1,78,48,47};
 			System.out.println("" + byteArray2Hex(test_sps) );
 		}
