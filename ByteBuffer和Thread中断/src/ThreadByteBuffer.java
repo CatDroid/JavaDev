@@ -203,7 +203,7 @@ public class ThreadByteBuffer {
 			 
 			int start = range.indexOf("=");
 			int end = range.indexOf("-");
-			String sub = (String) range.subSequence(start + 1, end); // [startIndex, endIndex)
+			String sub = (String) range.subSequence(start + 1, end); // 范围是 [startIndex, endIndex)
 			System.out.println( "=与-之间的子串:" + sub );
 			float rangef = Float.parseFloat(sub) ;
 			System.out.println( "解析出浮点数 :" + rangef );;
@@ -222,21 +222,26 @@ public class ThreadByteBuffer {
 			dbb.put((byte) 0);
 			dbb.put((byte) 0);
 			dbb.put((byte) 0);
-			System.out.println(">>>> " + dbb.position());;
-			//dbb.put((byte) 0); // java.nio.BufferOverflowException	
+			System.out.println(">>>> " + dbb.position());; 
+			//dbb.put((byte) 0); // 越界了会抛出异常 java.nio.BufferOverflowException	
 		}
 		
 
-		
+		{
+			// 在 PC上  JVM allocateDirect的ByteBuffer 是不能  array()成 byte[]数组的 
+			// 在Android上  allocateDirect的ByteBuffer 是可以转成数组的
+			//            但是 由Native层  NewDirectByteBuffer 的 不能转成数组 
+			ByteBuffer bbu = ByteBuffer.allocateDirect(100); 
+			System.out.println( "bbu direct = " + bbu.isDirect() );
+			byte[] bba = bbu.array();
+			bba[0] = 1 ;
+			System.out.println( "bba = " + bba[0] );
+		}
 
 		ArrayList<ByteBuffer> direct_array  = new ArrayList<ByteBuffer>();
-		
 		for(int j = 0 ; j < 257 ; j++){
 			ByteBuffer bbu = ByteBuffer.allocateDirect(1000000); // 也会导致 OOM Davlik Heap超过256 ?? 为什么是在Davlik 而不是 Native Heap ??
 			//ByteBuffer bbu = ByteBuffer.allocate(1000000); // 都会导致 java.lang.OutOfMemoryError
-			System.out.println( "bbu direct = " + bbu.isDirect() + " j = " + j );
-			byte[] bba = bbu.array();
-			bba[0] = 1 ;
 			direct_array.add(bbu);
 			try {
 				Thread.sleep(500);
