@@ -233,167 +233,188 @@ public class ThreadByteBuffer {
 			//            但是 由Native层  NewDirectByteBuffer 的 不能转成数组 
 			ByteBuffer bbu = ByteBuffer.allocateDirect(100); 
 			System.out.println( "bbu direct = " + bbu.isDirect() );
-			byte[] bba = bbu.array();
-			bba[0] = 1 ;
-			System.out.println( "bba = " + bba[0] );
+			//byte[] bba = bbu.array();
+			//bba[0] = 1 ;
+			//System.out.println( "bba = " + bba[0] );
 		}
 
-		ArrayList<ByteBuffer> direct_array  = new ArrayList<ByteBuffer>();
-		for(int j = 0 ; j < 257 ; j++){
-			ByteBuffer bbu = ByteBuffer.allocateDirect(1000000); // 也会导致 OOM Davlik Heap超过256 ?? 为什么是在Davlik 而不是 Native Heap ??
-			//ByteBuffer bbu = ByteBuffer.allocate(1000000); // 都会导致 java.lang.OutOfMemoryError
-			direct_array.add(bbu);
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		
-		for( int n = 0 ; n < 10000 ; n ++ ){
-			ByteBuffer mall = ByteBuffer.allocateDirect(1000000);
-		}
-     
-		SimpleDateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-		String file_uri = String.format("/mnt/sdcard/%s.mp4",   df.format(new Date())  ) ;   
-		
-		System.out.println("ll " + file_uri ); 
-		
-		byte[] my_sps = null;
-		System.out.println("before getSPS my_sps = " + my_sps );
-		getSPS(my_sps);
-		System.out.println("after getSPS my_sps = " + my_sps );
-		
-		byte[] test_sps = new byte[]{0,1,78,48,47};
-		System.out.println("" + byteArray2Hex(test_sps) );
-		
-		ByteBuffer directbb = ByteBuffer.allocateDirect(10);
-		directbb.put((byte) 18);
-		directbb.flip();
-		System.out.println("bb = " + directbb.get(0)) ;
-		
-		ByteBuffer bbtemp = ByteBuffer.allocate(directbb.remaining());
-		bbtemp.put(directbb);
-		bbtemp.flip();
-		System.out.println("bb = " + bbtemp.get(0)) ;
-		
-		
-		
-		ByteBuffer allocate = ByteBuffer.allocate(20);
-		System.out.println("1 pos " + allocate.position() 
-								+ " remain " + allocate.remaining() 
-								+ " limit " + allocate.limit() 
-								+ " cap " + allocate.capacity() );
-		allocate.put((byte) 12) ;
-		allocate.put((byte) 13) ;
-		System.out.println("2 pos " + allocate.position() 
-								+ " remain " + allocate.remaining() 
-								+ " limit " + allocate.limit() 
-								+ " cap " + allocate.capacity() );
-		
-		byte[] arr = allocate.array();
-		System.out.println("1 array " + Arrays.toString( arr ));
-		arr[0] = 18 ; // 会直接修改ByteBuffer里面的数据
-		System.out.println("2 array " + Arrays.toString( arr ));
-		
-		 
-		
-		ByteBuffer bb = ByteBuffer.wrap( new byte[]{0,1,2,3,4,5,6} ) ;
-		Iterator i ;
-		bb.position(4);
-		byte[] bbarray =   bb.array() ;
-        byte[] data = new byte[bb.remaining()];
-        bb.get(data, 0, bb.remaining());
-        Map.Entry m;
-
-		System.out.println("Hello World!" +  Arrays.toString(bbarray)); 
- 		System.out.println("= " + Arrays.toString( data ));
- 		
- 	
- 		int abc = Integer.parseInt("1080p");
-
- 		byte[] temp = new byte[]{ 0x68,(byte) 0xca,0x43,(byte) 0xc8 };
- 		 
- 		int cast = 5;
- 		switch(_MSG_TYPE.values()[cast]){
- 		case MSG_TYPE_STATUS:
- 			break;
- 		default:
- 			break;
- 		}
- 		
- 		
- 		
- 		List<Integer> mList = new LinkedList<Integer>();
- 		mList.add(1);
- 		mList.add(2);
- 		mList.add(3);
- 		mList.add(4);
- 		
- 		System.out.println("total");
- 		for(Integer loo : mList){
- 			System.out.println(" loo " + loo);
- 		}
- 		
- 		System.out.println("after remove 0 ");
- 		mList.remove(0);
- 		for(Integer loo : mList){
- 			System.out.println(" loo " + loo);
- 		}
- 		
- 		System.out.println("after remove 0 ");
- 		mList.remove(0);
- 		for(Integer loo : mList){
- 			System.out.println(" loo " + loo);
- 		}
- 		
- 		final Thread th1 = new Thread(){
-
-			@Override
-			public void run() {
-				
-				this.interrupt();
-				System.out.println(" this.isInterrupted()  " + this.isInterrupted()  );
-				System.out.println(" interrupted ? " +  Thread.interrupted()  );
-			
-				int i = 5; 
-				while( i-- != 0 ){
-					try {
-						sleep(2000);
-						// Thread.interrupted()假如当前的中断标志为true，则调完后会将中断标志位设置成false
-						// 清除中断标记 返回原来中断状态
-						System.out.println(" i " + i + " interrupted ? " +  this.isInterrupted()  );
-					} catch (InterruptedException e) {
-						//	sleep抛出异常后 Interrputed状态标记也会清除
-						//	当有别的线程调用了本线程的interrupt( )时  会设置一个标记以表示这个这个线程被打断了
-						//	当本线程捕获这个异常的时候，会清除这个标志  所以catch语句会永远报告说isInterrupted( )是false
-						System.out.println("Thread.interrupted() ? " + this.isInterrupted());
-						e.printStackTrace();
-					}
-				}
-				super.run();
-			}
- 			
- 		};
- 		th1.start();
- 		
- 		new Thread(){
- 			@Override
-			public void run() {
- 				try {
-					sleep(3000);
+		{
+			// 在Android 上 ByteBuffer.allocateDirect 是分配到 Dalvik Heap上的 , Native Heap不会改变 
+			ArrayList<ByteBuffer> direct_array  = new ArrayList<ByteBuffer>();
+			for(int j = 0 ; j < 2048 ; j++){
+				ByteBuffer bbu = ByteBuffer.allocateDirect(10000000); // 导致 java.lang.OutOfMemoryError: Direct buffer memory
+				//ByteBuffer bbu = ByteBuffer.allocate(10000000); 	  // 导致  java.lang.OutOfMemoryError: Java heap space
+				direct_array.add(bbu);
+				System.out.println("add " + j + " into " + (bbu.isDirect()?"DirectByteBuffer ":"ByteBuffer ")+ " Array ");
+				/*
+				try {
+					Thread.sleep(5);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					System.out.println("Thread.sleep InterruptedException");;
 					e.printStackTrace();
 				}
- 				th1.interrupt();
- 				System.out.println("th1.interrupted() ? " + th1.isInterrupted());
- 				
- 			}
- 		}.start();
+				*/
+			}
+		}
+		
+		{
+			for( int n = 0 ; n < 10000 ; n ++ ){
+				ByteBuffer mall = ByteBuffer.allocateDirect(1000000);
+			}	
+		}
+		
+		{
+			SimpleDateFormat df = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+			String file_uri = String.format("/mnt/sdcard/%s.mp4",   df.format(new Date())  ) ;   
+			System.out.println("ll " + file_uri ); 
+		}
+
+		{
+			byte[] my_sps = null;
+			System.out.println("before getSPS my_sps = " + my_sps );
+			getSPS(my_sps);
+			System.out.println("after getSPS my_sps = " + my_sps );
+			
+			byte[] test_sps = new byte[]{0,1,78,48,47};
+			System.out.println("" + byteArray2Hex(test_sps) );
+		}
+		
+		
+		{
+			ByteBuffer directbb = ByteBuffer.allocateDirect(10);
+			directbb.put((byte) 18);
+			directbb.flip();
+			System.out.println("bb = " + directbb.get(0)) ;
+			
+			ByteBuffer bbtemp = ByteBuffer.allocate(directbb.remaining());
+			bbtemp.put(directbb);
+			bbtemp.flip();
+			System.out.println("bb = " + bbtemp.get(0)) ;	
+		}
+	
+		
+		{
+			ByteBuffer allocate = ByteBuffer.allocate(20);
+			System.out.println("1 pos " + allocate.position() 
+									+ " remain " + allocate.remaining() 
+									+ " limit " + allocate.limit() 
+									+ " cap " + allocate.capacity() );
+			allocate.put((byte) 12) ;
+			allocate.put((byte) 13) ;
+			System.out.println("2 pos " + allocate.position() 
+									+ " remain " + allocate.remaining() 
+									+ " limit " + allocate.limit() 
+									+ " cap " + allocate.capacity() );
+			
+			byte[] arr = allocate.array();
+			System.out.println("1 array " + Arrays.toString( arr ));
+			arr[0] = 18 ; // 会直接修改ByteBuffer里面的数据
+			System.out.println("2 array " + Arrays.toString( arr ));
+			
+		}
+		
+		
+		{
+			ByteBuffer bb = ByteBuffer.wrap( new byte[]{0,1,2,3,4,5,6} ) ;
+			Iterator i ;
+			bb.position(4);
+			byte[] bbarray =   bb.array() ;
+	        byte[] data = new byte[bb.remaining()];
+	        bb.get(data, 0, bb.remaining());
+	        Map.Entry m;
+
+			System.out.println("Hello World!" +  Arrays.toString(bbarray)); 
+	 		System.out.println("= " + Arrays.toString( data ));
+		}
+		
+	
+		{
+	 		int abc = Integer.parseInt("1080p");
+
+	 		byte[] temp = new byte[]{ 0x68,(byte) 0xca,0x43,(byte) 0xc8 };
+	 		 
+	 		int cast = 5;
+	 		switch(_MSG_TYPE.values()[cast]){
+	 		case MSG_TYPE_STATUS:
+	 			break;
+	 		default:
+	 			break;
+	 		}	
+		}
+ 	
+
+		{
+			List<Integer> mList = new LinkedList<Integer>();
+	 		mList.add(1);
+	 		mList.add(2);
+	 		mList.add(3);
+	 		mList.add(4);
+	 		
+	 		System.out.println("total");
+	 		for(Integer loo : mList){
+	 			System.out.println(" loo " + loo);
+	 		}
+	 		
+	 		System.out.println("after remove 0 ");
+	 		mList.remove(0);
+	 		for(Integer loo : mList){
+	 			System.out.println(" loo " + loo);
+	 		}
+	 		
+	 		System.out.println("after remove 0 ");
+	 		mList.remove(0);
+	 		for(Integer loo : mList){
+	 			System.out.println(" loo " + loo);
+	 		}
+		}
  		
+		{
+	 		final Thread th1 = new Thread(){
+
+				@Override
+				public void run() {
+					
+					this.interrupt();
+					System.out.println(" this.isInterrupted()  " + this.isInterrupted()  );
+					System.out.println(" interrupted ? " +  Thread.interrupted()  );
+				
+					int i = 5; 
+					while( i-- != 0 ){
+						try {
+							sleep(2000);
+							// Thread.interrupted()假如当前的中断标志为true，则调完后会将中断标志位设置成false
+							// 清除中断标记 返回原来中断状态
+							System.out.println(" i " + i + " interrupted ? " +  this.isInterrupted()  );
+						} catch (InterruptedException e) {
+							//	sleep抛出异常后 Interrputed状态标记也会清除
+							//	当有别的线程调用了本线程的interrupt( )时  会设置一个标记以表示这个这个线程被打断了
+							//	当本线程捕获这个异常的时候，会清除这个标志  所以catch语句会永远报告说isInterrupted( )是false
+							System.out.println("Thread.interrupted() ? " + this.isInterrupted());
+							e.printStackTrace();
+						}
+					}
+					super.run();
+				}
+	 			
+	 		};
+	 		th1.start();
+	 		
+	 		new Thread(){
+	 			@Override
+				public void run() {
+	 				try {
+						sleep(3000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	 				th1.interrupt();
+	 				System.out.println("th1.interrupted() ? " + th1.isInterrupted());
+	 				
+	 			}
+	 		}.start();
+		}
+
 	}
 	
 }
