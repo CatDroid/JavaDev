@@ -59,7 +59,7 @@ public class Test {
 		// Java SE 7中，编译器对内部类中引用的外部变量（即捕获的变量）要求非常严格：如果捕获的变量没有被声明为final就会产生一个编译错误
 		// Java SE 8中，捕获那些符合有效只读（Effectively final）的局部变量
 		
-		//local_arg = "123"; // local_arg 必须是 final 或者 等效final 
+		//local_arg = "123"; // local_arg 必须是 final 或者 等效final    容易引起race condition
 		return  a ;
 	}
 	
@@ -236,13 +236,39 @@ public class Test {
 			list.forEach( x-> { mFinalSum += x*x ;} );	
 			out.println("Lambda 求平方和 = " + mFinalSum );
 			 
+			// lambda表达式"""不支持修改捕获变量"""
+			// 我们可以使用更好的方式来实现同样的效果：使用规约（reduction）
+			
+			// java.util.stream包提供了各种通用的和专用的规约操作（例如sum、min和max）
+			// 就上面的例子而言，我们可以使用规约操作（在串行和并行下都是安全的）来代替forEach
 
 		}
 		
 		{
+			class MyClass{
+				public MyClass(int temp) {
+					mPrivateData = temp;
+				}
+				
+				private int mPrivateData ;
+				public Runnable getLambdaWithThis(String tag){
+					return ()->{ out.println("lambda runnig with 'this' " + tag  + this.mPrivateData ) ; };
+				}
+			}
+			// 匿名类和Lambda区别
 			// 1. Lambda中"""this解读为定义lambda的外部类的实例"""  但是匿名类是自己实例
 			// 2. Java 编译器编译 Lambda 表达式并将他们转化为"""类里面的私有函数"""
+			
+			
 			// list.forEach( x-> { out.println("this" + this ); } );
+			MyClass my = new MyClass(1);
+			Runnable run = my.getLambdaWithThis("private:");
+			new Thread(run).start();
+			// 包含此类引用的lambda表达式相当于捕获了this实例
+			// 在其它情况下，lambda对象不会保留任何对this的引用。
+			// 这个特性对内存管理是一件好事：内部类实例会一直保留一个对其外部类实例的强引用，
+			// 而那些没有捕获外部类成员的lambda表达式则不会保留对外部类实例的引用。
+			// 要知道内部类的这个特性往往会造成内存泄露。
 		}
 		
 		{	// 函数式接口的名称并不是lambda表达式的一部分
@@ -285,4 +311,8 @@ Function<T, R>	——	接收T对象，返回R对象
 Supplier<T>		——	提供T对象（例如工厂），不接收值
 UnaryOperator<T>——	接收T对象，返回T对象
 BinaryOperator<T>——	接收两个T对象，返回T对象
+
+两篇比较好的文章
+http://www.importnew.com/16436.html
+http://www.cnblogs.com/figure9/archive/2014/10/24/4048421.html
  */
