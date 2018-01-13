@@ -46,7 +46,7 @@ public class Test {
 	// 函数返回闭包
 	public static TestListener ReturnClosure(String func_arg ) {
 		String local_arg = "This Is Local Arg In Function";
-		 	// Lambda   闭包特性: 可记录(包含)  创建它的时候 所在区域的信息(变量)
+		// Lambda   闭包特性: 可记录(包含)  创建它的时候 所在区域的信息(变量)
 		TestListener a =		(String... strings)->{
 					out.println("闭包   " + local_arg );  
 					out.println("闭包   " + func_arg  );
@@ -55,7 +55,10 @@ public class Test {
 					}
 					return 2 ; // 如果函数式接口定义返回值  lambda必须也返回值
 				} ;
-				
+		
+		// Java SE 7中，编译器对内部类中引用的外部变量（即捕获的变量）要求非常严格：如果捕获的变量没有被声明为final就会产生一个编译错误
+		// Java SE 8中，捕获那些符合有效只读（Effectively final）的局部变量
+		
 		//local_arg = "123"; // local_arg 必须是 final 或者 等效final 
 		return  a ;
 	}
@@ -264,3 +267,22 @@ public class Test {
 	}
 	static int mFinalSum = 0 ;
 }
+
+/*
+
+Java SE 7中已经存在的函数式接口
+java.lang.Runnable
+java.util.concurrent.Callable
+java.security.PrivilegedAction
+java.util.Comparator
+java.io.FileFilter
+java.beans.PropertyChangeListener
+
+Java SE 8中增加了一个新的包：java.util.function，它里面包含了常用的函数式接口
+Predicate<T>	——	接收T对象并返回boolean
+Consumer<T>		——	接收T对象，不返回值
+Function<T, R>	——	接收T对象，返回R对象
+Supplier<T>		——	提供T对象（例如工厂），不接收值
+UnaryOperator<T>——	接收T对象，返回T对象
+BinaryOperator<T>——	接收两个T对象，返回T对象
+ */
