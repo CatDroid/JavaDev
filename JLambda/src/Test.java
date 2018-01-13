@@ -220,10 +220,16 @@ public class Test {
 			//list.forEach( x-> { sum3 += x*x ;} );	
 			
 			list.forEach( x-> { mFinalSum += x*x ;} );	
+			out.println("Lambda 求平方和 = " + mFinalSum );
 			 
-			
+
 		}
 		
+		{
+			// 1. Lambda中"""this解读为定义lambda的外部类的实例"""  但是匿名类是自己实例
+			// 2. Java 编译器编译 Lambda 表达式并将他们转化为"""类里面的私有函数"""
+			// list.forEach( x-> { out.println("this" + this ); } );
+		}
 		
 		
 		
