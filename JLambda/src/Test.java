@@ -1,14 +1,17 @@
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import static java.lang.System.out;
 
 
 public class Test {
 
-	// ÕâÖÖ½Ó¿Ú½Ğ×ö  º¯ÊıÊ½½Ó¿Ú 
+	// è¿™ç§æ¥å£å«åš  å‡½æ•°å¼æ¥å£ 
 	@FunctionalInterface
 	interface TestListener{ 
 		public int callback(String... strings);
@@ -19,38 +22,51 @@ public class Test {
 		public float returnVal();
 	}
 	
-	// ´«µİº¯Êı ×÷Îª ²ÎÊı 
+	// ä¼ é€’å‡½æ•° ä½œä¸º å‚æ•° 
 	public static void TransferFunction(TestListener tl) {
 		tl.callback("TransferFunction","arg1","arg2");
 	}
 	
 	public static void TransferFunction2(ValueLister val) {
-		out.println("º¯ÊıÊ½½Ó¿Úlambda = " + val.returnVal() );
+		out.println("å‡½æ•°å¼æ¥å£lambda = " + val.returnVal() );
 	}
 	
 	
-	// º¯Êı·µ»Ø±Õ°ü
+	// å‡½æ•°è¿”å›é—­åŒ…
 	public static TestListener ReturnClosure(String func_arg ) {
 		String local_arg = "This Is Local Arg In Function";
-		return 	// Lambda   ±Õ°üÌØĞÔ: ¿É¼ÇÂ¼(°üº¬)  ´´½¨ËüµÄÊ±ºò ËùÔÚÇøÓòµÄĞÅÏ¢(±äÁ¿)
-				(String... strings)->{
-					out.println("±Õ°ü   " + local_arg );  
-					out.println("±Õ°ü   " + func_arg  );
+		 	// Lambda   é—­åŒ…ç‰¹æ€§: å¯è®°å½•(åŒ…å«)  åˆ›å»ºå®ƒçš„æ—¶å€™ æ‰€åœ¨åŒºåŸŸçš„ä¿¡æ¯(å˜é‡)
+		TestListener a =		(String... strings)->{
+					out.println("é—­åŒ…   " + local_arg );  
+					out.println("é—­åŒ…   " + func_arg  );
 					for(String str : strings) {
 						out.println("lambda = " + str);
 					}
-					return 2 ; // Èç¹ûº¯ÊıÊ½½Ó¿Ú¶¨Òå·µ»ØÖµ  lambda±ØĞëÒ²·µ»ØÖµ
+					return 2 ; // å¦‚æœå‡½æ•°å¼æ¥å£å®šä¹‰è¿”å›å€¼  lambdaå¿…é¡»ä¹Ÿè¿”å›å€¼
 				} ;
+				
+		//local_arg = "123"; // local_arg å¿…é¡»æ˜¯ final æˆ–è€… ç­‰æ•ˆfinal 
+		return  a ;
 	}
+	
+	// Predicateæ˜¯java.utilåŒ…ä¸­çš„  æ¨¡æ¿ + å‡½æ•°å¼æ¥å£ 
+	public static void evaluate(List<Integer> list, Predicate<Integer> predicate) {
+	    for(Integer n: list)  {
+	        if(predicate.test(n)) {
+	            System.out.println(n + " ");
+	        }
+	    }
+	}
+	
 	
 	public static void main(String[] args) {
 		
 		int[] a = new int[12];
 		for(int temp : a) {
-			out.printf("k:%d\n", temp  ); // ¸úC++Ò»ÑùµÄÊä³ö
+			out.printf("k:%d\n", temp  ); // è·ŸC++ä¸€æ ·çš„è¾“å‡º
 		}
 		 
-		// ±éÀúMap
+		// éå†Map
 		Map<String, Integer> items = new HashMap<String, Integer>();
 		items.put("A", 10);
 		items.put("B", 20);
@@ -65,7 +81,7 @@ public class Test {
 //		time = System.currentTimeMillis();
 //		for(int i = 0 ; i < 10000 ; i++ )
 		
-			//  Java8 Ö®Ç°µÄ·½Ê½ 
+			//  Java8 ä¹‹å‰çš„æ–¹å¼ 
 			for (Map.Entry<String, Integer> entry : items.entrySet()  ) {
 			    out.println("Item : " + entry.getKey() + " Count : " + entry.getValue());
 			}
@@ -82,14 +98,14 @@ public class Test {
 					}
 			);		
 
-	
-		// Êµ¼Ê²âÊÔ ÆÕÍ¨µÄ±ÈlambdaÒª¿ì
+			
+		// å®é™…æµ‹è¯• æ™®é€šçš„æ¯”lambdaè¦å¿«
 //		lambda_cost = System.currentTimeMillis() - time ;
 //		out.printf("normal %d lambda %d best %s",normal_cost , lambda_cost , 
 //				normal_cost > lambda_cost?"normal":"lambda"
 //				);
 		
-		
+	
 		items.forEach(
 				(k,v)->{
 					out.println("Item : " + k + " Count : " + v);
@@ -100,37 +116,37 @@ public class Test {
 		);
 		
 		
-		/* ÔÚ Java ÖĞ¶¨ÒåµÄº¯Êı»ò·½·¨²»¿ÉÄÜÍêÈ«¶ÀÁ¢£¬Ò²²»ÄÜ½«·½·¨×÷Îª²ÎÊı»ò·µ»ØÒ»¸ö·½·¨¸øÊµÀı
-		       ÎÒÃÇ×ÜÊÇÍ¨¹ıÄäÃûÀà(newÄ³¸öInterface²¢overrideÊµÏÖÆä·½·¨)¸ø·½·¨´«µİº¯Êı¹¦ÄÜ 
+		/* åœ¨ Java ä¸­å®šä¹‰çš„å‡½æ•°æˆ–æ–¹æ³•ä¸å¯èƒ½å®Œå…¨ç‹¬ç«‹ï¼Œä¹Ÿä¸èƒ½å°†æ–¹æ³•ä½œä¸ºå‚æ•°æˆ–è¿”å›ä¸€ä¸ªæ–¹æ³•ç»™å®ä¾‹
+		       æˆ‘ä»¬æ€»æ˜¯é€šè¿‡åŒ¿åç±»(newæŸä¸ªInterfaceå¹¶overrideå®ç°å…¶æ–¹æ³•)ç»™æ–¹æ³•ä¼ é€’å‡½æ•°åŠŸèƒ½ 
 		
-		  	º¯Êı¶Ô Java ¶øÑÔ²¢²»ÖØÒª£¬ÔÚ Java µÄÊÀ½çÀï£¬""º¯ÊıÎŞ·¨¶ÀÁ¢´æÔÚ""
-			ÔÚº¯ÊıÊ½±à³ÌÓïÑÔÖĞ£¬º¯ÊıÊÇÒ»µÈ¹«Ãñ£¬ËüÃÇ¿ÉÒÔ¶ÀÁ¢´æÔÚ£¬Äã¿ÉÒÔ½«Æä¸³Öµ¸øÒ»¸ö±äÁ¿£¬»ò½«ËûÃÇµ±×ö²ÎÊı´«¸øÆäËûº¯Êı
-			º¯ÊıÊ½ÓïÑÔ£¬Ìá¹©ÁËÒ»ÖÖÇ¿´óµÄ¹¦ÄÜ¡ª¡ª""±Õ°ü""  
-			±Õ°üÊÇÒ»¸ö¿Éµ÷ÓÃµÄ""¶ÔÏó""£¬Ëü¼ÇÂ¼ÁËÒ»Ğ©ĞÅÏ¢£¬ÕâĞ©ĞÅÏ¢À´×ÔÓÚ""´´½¨ËüµÄ×÷ÓÃÓò""
+		  	å‡½æ•°å¯¹ Java è€Œè¨€å¹¶ä¸é‡è¦ï¼Œåœ¨ Java çš„ä¸–ç•Œé‡Œï¼Œ""å‡½æ•°æ— æ³•ç‹¬ç«‹å­˜åœ¨""
+			åœ¨å‡½æ•°å¼ç¼–ç¨‹è¯­è¨€ä¸­ï¼Œå‡½æ•°æ˜¯ä¸€ç­‰å…¬æ°‘ï¼Œå®ƒä»¬å¯ä»¥ç‹¬ç«‹å­˜åœ¨ï¼Œä½ å¯ä»¥å°†å…¶èµ‹å€¼ç»™ä¸€ä¸ªå˜é‡ï¼Œæˆ–å°†ä»–ä»¬å½“åšå‚æ•°ä¼ ç»™å…¶ä»–å‡½æ•°
+			å‡½æ•°å¼è¯­è¨€ï¼Œæä¾›äº†ä¸€ç§å¼ºå¤§çš„åŠŸèƒ½â€”â€”""é—­åŒ…""  
+			é—­åŒ…æ˜¯ä¸€ä¸ªå¯è°ƒç”¨çš„""å¯¹è±¡""ï¼Œå®ƒè®°å½•äº†ä¸€äº›ä¿¡æ¯ï¼Œè¿™äº›ä¿¡æ¯æ¥è‡ªäº""åˆ›å»ºå®ƒçš„ä½œç”¨åŸŸ""
 		
 			@python 
 			def func():
 				print "this is func"
 				pass
 				print (type(func)) 		### <type 'function'>  
-			ÔÚpythonÖĞ funcÊÇÒ»¸öº¯ÊıÀàĞÍµÄ¶ÔÏó 
+			åœ¨pythonä¸­ funcæ˜¯ä¸€ä¸ªå‡½æ•°ç±»å‹çš„å¯¹è±¡ 
 		
-			ÔÚº¯ÊıÊ½±à³ÌÓïÑÔÖĞ£¬Lambda±í´ïÊ½µÄ"""ÀàĞÍÊÇº¯Êı"""
-			ÔÚJavaÖĞ£¬Lambda±í´ïÊ½ÊÇ¶ÔÏó£¬ËûÃÇ±ØĞëÒÀ¸½ÓÚÒ»ÖÖÌØ±ğµÄ¶ÔÏó"""ÀàĞÍ---º¯ÊıÊ½½Ó¿Ú"""(functional interface)
+			åœ¨å‡½æ•°å¼ç¼–ç¨‹è¯­è¨€ä¸­ï¼ŒLambdaè¡¨è¾¾å¼çš„"""ç±»å‹æ˜¯å‡½æ•°"""
+			åœ¨Javaä¸­ï¼ŒLambdaè¡¨è¾¾å¼æ˜¯å¯¹è±¡ï¼Œä»–ä»¬å¿…é¡»ä¾é™„äºä¸€ç§ç‰¹åˆ«çš„å¯¹è±¡"""ç±»å‹---å‡½æ•°å¼æ¥å£"""(functional interface)
 		
-			ÏÖ´ú±à³ÌÓïÑÔ±ØĞë°üº¬±Õ°üÕâÀàÌØĞÔ  ???
+			ç°ä»£ç¼–ç¨‹è¯­è¨€å¿…é¡»åŒ…å«é—­åŒ…è¿™ç±»ç‰¹æ€§  ???
 			
-			lambda±í´ï£º  
-			1. ÀàËÆÄäÃûº¯Êı£¬Ã»ÓĞÉùÃ÷µÄ·½·¨£¬¼´Ã»ÓĞ·ÃÎÊĞŞÊÎ·û¡¢·µ»ØÖµÉùÃ÷ºÍÃû×Ö
-			2. Ö»ÓĞÒ»¸ö²ÎÊı ()  Ö»ÓĞÒ»¸öÓï¾ä{} ¶¼¿ÉÒÔÊ¡ÂÔ  
-			3. ²ÎÊıÀàĞÍ¿ÉÒÔÊ¡ÂÔ×Ô¶¯ÍÆµ¼
-			4. ·µ»ØÀàĞÍ²»ÓÃĞ´    ·µ»ØÀàĞÍÓë´úÂë¿éµÄ·µ»ØÀàĞÍÒ»ÖÂ  
+			lambdaè¡¨è¾¾ï¼š  
+			1. ç±»ä¼¼åŒ¿åå‡½æ•°ï¼Œæ²¡æœ‰å£°æ˜çš„æ–¹æ³•ï¼Œå³æ²¡æœ‰è®¿é—®ä¿®é¥°ç¬¦ã€è¿”å›å€¼å£°æ˜å’Œåå­—
+			2. åªæœ‰ä¸€ä¸ªå‚æ•° ()  åªæœ‰ä¸€ä¸ªè¯­å¥{} éƒ½å¯ä»¥çœç•¥  
+			3. å‚æ•°ç±»å‹å¯ä»¥çœç•¥è‡ªåŠ¨æ¨å¯¼
+			4. è¿”å›ç±»å‹ä¸ç”¨å†™    è¿”å›ç±»å‹ä¸ä»£ç å—çš„è¿”å›ç±»å‹ä¸€è‡´  
 		*/
-		TransferFunction(new TestListener() {  // ÄäÃûÀà 
+		TransferFunction(new TestListener() {  // åŒ¿åç±» 
 			@Override
 			public int callback(String... strings) {
 				for(String str : strings) {
-					out.println("new ÄäÃûÀà = " + str);
+					out.println("new åŒ¿åç±» = " + str);
 				}
 				return 1 ;
 			}
@@ -139,25 +155,79 @@ public class Test {
 		
 		TransferFunction( ReturnClosure("This is Funciton Arg in Function"));
 		
-		TransferFunction2( ()->3.1415f ); // ¼ò½àĞ´·¨£¬ Ïàµ±ÓÚ  ()-->{return 43}; 
+		TransferFunction2( ()->3.1415f ); // ç®€æ´å†™æ³•ï¼Œ ç›¸å½“äº  ()-->{return 43}; 
 		
-		// Ã¿¸öLambda±í´ïÊ½¶¼ÄÜÒşÊ½µØ¸³Öµ¸øº¯ÊıÊ½½Ó¿Ú
-		// """lambda --> º¯ÊıÊ½½Ó¿Ú"""
-		Runnable r = () ->  out.println("º¯ÊıÊ½½Ó¿Ú=lambda±í´ïÊ½");
+		// æ¯ä¸ªLambdaè¡¨è¾¾å¼éƒ½èƒ½éšå¼åœ°èµ‹å€¼ç»™å‡½æ•°å¼æ¥å£
+		// """lambda --> å‡½æ•°å¼æ¥å£"""
+		Runnable r = () ->  out.println("å‡½æ•°å¼æ¥å£=lambdaè¡¨è¾¾å¼");
 
-		// µ±²»Ö¸Ã÷º¯ÊıÊ½½Ó¿ÚÊ±£¬"""±àÒëÆ÷»á×Ô¶¯½âÊÍÕâÖÖ×ª»¯"""		
+		// å½“ä¸æŒ‡æ˜å‡½æ•°å¼æ¥å£æ—¶ï¼Œ"""ç¼–è¯‘å™¨ä¼šè‡ªåŠ¨è§£é‡Šè¿™ç§è½¬åŒ–"""		
 		new Thread(
-					() -> out.println("This is Lambda--> º¯ÊıÊ½½Ó¿Ú(±àÒëÆ÷×Ô¶¯½âÊÍ)")
+					() -> out.println("This is Lambda--> å‡½æ•°å¼æ¥å£(ç¼–è¯‘å™¨è‡ªåŠ¨è§£é‡Š)")
 				).start();
 		
 		
-		// Consumer ÊÇÒ»¸öÄ£°å½Ó¿Ú+º¯ÊıÊ½½Ó¿Ú
-		Consumer<Integer>  c = (Integer x) -> {  out.println("Ä£°å½Ó¿Ú+º¯ÊıÊ½½Ó¿Ú = " + x )  };
+		// Consumer æ˜¯ä¸€ä¸ªæ¨¡æ¿æ¥å£+å‡½æ•°å¼æ¥å£
+		Consumer<Integer>  c = (Integer x) -> {  out.println("æ¨¡æ¿æ¥å£+å‡½æ•°å¼æ¥å£ = " + x ); };
 		c.accept(12);
 		BiConsumer<Integer, String> b = 
-							(Integer x, String y) -> System.out.println("Ä£°å½Ó¿Ú+º¯ÊıÊ½½Ó¿Ú = " + x + " : " + y);
-		b.accept(13,"str13");
+							(Integer x, String y) -> System.out.println("æ¨¡æ¿æ¥å£+å‡½æ•°å¼æ¥å£ = " + x + " : " + y);
+		b.accept(13,"str12");
 
+		
+		
+		{// lambdaä½œä¸ºå‡½æ•°çš„å‚æ•°ï¼Œéå¸¸ç®€æ´
+			List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
+			list.forEach( n -> out.println(n) );
+			System.out.println("Print even numbers:");
+			evaluate( list,  (n)-> n % 2 == 0 );
+			System.out.println("Print odd numbers:");
+			evaluate( list,  (n)-> n % 2 == 1 );
+			out.println("Print numbers greater than 5:");
+			evaluate( list,  (n)-> n > 5 );
+		}
+		
+		{
+			List<Integer> list = Arrays.asList(1,2,3,4,5,6,7);
+			list.forEach( x -> out.println("List.forEach with Lambda " + x));
+		}
+
+		{// æ±‚å¹³æ–¹å’Œ
+			//Old way:
+			List<Integer> list = Arrays.asList(1,2,3,4,5,6,7);
+			int sum1 = 0;
+			for(Integer n : list) {
+			    int x = n * n;
+			    sum1 = sum1 + x;
+			}
+			out.println("æ™®é€šæ–¹å¼æ±‚å¹³æ–¹å’Œ  = " + sum1);
+
+			//New way:  Java8 java.util.stream.Stream  
+			int sum2 = list.stream()
+						.map( x -> { return x * x ; } )
+						.reduce( 
+							(sum,next) -> { // reduce 
+								out.printf("sum = %d next = %d \n", sum ,next) ;
+								return sum + next; // è¿”å›ä½œä¸ºä¸‹ä¸€æ¬¡çš„sum
+							} 
+						).get();
+			//int sum2 = list2.stream().map( x->x*x ).reduce((x,y)->x+y).get(); æ›´åŠ ç®€æ´   x*x è¡¨è¾¾å¼ å°±æ˜¯è¿”å›çš„å€¼ return x*x --> ç®€å†™æˆ x*x 
+			out.println("Lambda + Stream æ±‚å¹³æ–¹å’Œ  = " + sum2);
+			
+			
+			// Java lambdaä¸­å¼•ç”¨çš„å±€éƒ¨å˜é‡å¿…é¡»æ˜¯finalæˆ–è€…ç­‰æ•ˆfinal
+			//int sum3 = 0 ;
+			//list.forEach( x-> { sum3 += x*x ;} );	
+			
+			list.forEach( x-> { mFinalSum += x*x ;} );	
+			 
+			
+		}
+		
+		
+		
+		
 		return ;
 	}
+	static int mFinalSum = 0 ;
 }
