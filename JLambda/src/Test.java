@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -246,7 +247,10 @@ public class Test {
 			 */
 			Callable<String> target_type_a = () -> "done";
 			PrivilegedAction<String> target_type_b = () -> "done";
-			
+			// 由于目标类型（函数式接口）已经“知道”lambda表达式的形式参数（Formal parameter）类型，所以我们没有必要把已知类型再重复一遍
+			// 也就是说，lambda表达式的参数类型可以从目标类型中得出
+			Comparator<String> target_type_c = (s1, s2) -> s1.compareToIgnoreCase(s2);// 编译器可以推导出s1和s2的类型是String
+			// 不要把"""高度问题"""转化成"""宽度问题"""!! 匿名内部类有高度问题
 		}
 		
 		return ;
