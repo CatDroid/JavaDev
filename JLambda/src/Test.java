@@ -15,6 +15,13 @@ import java.security.PrivilegedAction;
 
 public class Test {
 
+	// 编译器会根据接口的结构自行判断
+	// 判断过程并非简单的对接口方法计数：
+	// 一个接口可能冗余的定义了一个Object已经提供的方法，比如toString()，或者定义了静态方法或默认方法，
+	// 这些都不属于函数式接口方法的范畴
+
+	// 可以通过@FunctionalInterface注解来显式指定一个接口是函数式接口
+	
 	// 这种接口叫做  函数式接口 
 	@FunctionalInterface
 	interface TestListener{ 
