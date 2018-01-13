@@ -2,11 +2,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static java.lang.System.out;
+
+import java.security.PrivilegedAction;
 
 
 public class Test {
@@ -231,7 +234,20 @@ public class Test {
 			// list.forEach( x-> { out.println("this" + this ); } );
 		}
 		
-		
+		{	// 函数式接口的名称并不是lambda表达式的一部分
+			// 对于给定的lambda表达式，它的类型是  上下文所期待的类型进行推导
+			// 编译器会检查lambda表达式的类型和目标类型的方法签名（method signature）是否一致
+			/*
+			 * 当且仅当下面所有条件均满足时，lambda表达式才可以被赋给目标类型T：
+				1. T是一个函数式接口
+				2. lambda表达式的参数和T的方法参数在数量和类型上一一对应
+				3. lambda表达式的返回值和T的方法返回值相兼容（Compatible）
+				4. lambda表达式内所抛出的异常和T的方法throws类型相兼容
+			 */
+			Callable<String> target_type_a = () -> "done";
+			PrivilegedAction<String> target_type_b = () -> "done";
+			
+		}
 		
 		return ;
 	}
