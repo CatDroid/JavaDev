@@ -89,11 +89,11 @@ public class test {
 			p.set(new Fruit()); 
 			p.set(new Apple()); // Apple --> Fruit 不用显式强制转换  
 			// p.set(new Object() ); // Error  Object --> Fruit  !!!  因为super T限制里 面实例最低应该是T类
-
+ 
 			//读取出来的东西只能存放在Object类里。
-			//Apple newFruit3=(Apple) p.get();    //Error
-			//Fruit newFruit1=  p.get();    //Error
-			//Object newFruit2=p.get();
+			//Apple newFruit3=(Apple) p.get();    	// Error
+			//Fruit newFruit1=  p.get();    		// Error
+			Object newFruit2=p.get();				// Ok
 		}
 		
 		
