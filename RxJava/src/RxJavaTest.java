@@ -1,11 +1,18 @@
 import rx.Observable;
 import rx.Subscriber;
-
+import rx.Observable.OnSubscribe;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.internal.util.ActionSubscriber;
 import rx.schedulers.Schedulers;
 
 import static java.lang.System.out;
 
 import java.util.concurrent.TimeUnit;
+
+
+// http://reactivex.io/
+// http://reactivex.io/languages.html
 
 
 public class RxJavaTest {
@@ -18,6 +25,7 @@ public class RxJavaTest {
 	}
 	
  
+	
 	
 	public static void main(String[] args) {
 			
@@ -126,6 +134,78 @@ public class RxJavaTest {
 //		        .take(2)
 //		        .subscribe(arg_i->logThread(arg_i, Thread.currentThread()));
 		
+//		{
+//			Observable.just(1,2,3)
+//			.map( (Integer in) -> { // Func1  有参数   有返回值(与Action1区别) 
+//				switch(in) {
+//				case 1:
+//					return "111" ; 
+//				case 2:
+//					return "222" ;
+//				case 3:
+//					return "333";
+//				default:
+//					return "000";
+//				}
+//			} ).subscribe((String o )->{  out.println( "变换事件的参数类型 --->" + o ); });
+//			
+//			Integer[] array = new Integer[] {1,2,3,4};
+//			Observable.from(array).map( (Integer in)->{ //  map() 是一对一的转化，
+//				switch(in) {
+//				case 1:
+//					return "111";
+//				case 2:
+//					return "222";
+//				case 3:
+//					return "333";
+//				case 4:
+//					return "444";
+//				default:
+//					return "000";
+//				}
+//			}).subscribe((String o )->{  out.println( "变换事件的参数类型 --->" + o ); });
+//			
+//		}
+	
+		{
+			
+			/*
+					RxJava 都不建议开发者自定义 Operator 来直接使用 lift() 
+					而是建议尽量使用已有的 lift() 包装方法(如 map() flatMap() 等)进行组合来实现需求 
+					因为直接使用 lift(),非常容易发生一些难以发现的错误
+			 * */
+			Observable<Integer> observable = Observable.from(new Integer[] {1,2,3,4,5});
+			observable.lift(new Observable.Operator<String, Integer>() {
+				
+				// Operator只是 extends Func1,  这里 的 call就是Func1的接口 
+				// lift会创建新的Observable和 对应新的事件 OnSubscribeLift返回     下面的call其实就是新的事件!
+			    @Override
+			    public Subscriber<? super Integer> call(final Subscriber<? super String> subscriber) {
+			       
+			        return new Subscriber<Integer>() { // 将事件序列中的 Integer 对象转换为 String 对象
+			            @Override
+			            public void onNext(Integer integer) {
+			            	out.println("Inner Subscriber " + integer );
+			                subscriber.onNext("T" + integer);
+			            }
+
+			            @Override
+			            public void onCompleted() {
+			                subscriber.onCompleted();
+			            }
+
+			            @Override
+			            public void onError(Throwable e) {
+			                subscriber.onError(e);
+			            }
+			        };
+			    }
+			    
+			    
+			}).subscribe( (String s)-> out.println("Target Subscriber " + s )   ) ;
+		}
+		
+
 		
 		// 写在这里避免主进程退出了
 		try {
