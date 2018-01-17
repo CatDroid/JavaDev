@@ -69,13 +69,46 @@ public class RxJavaTest {
 //		        .subscribe(integer->logThread(integer, Thread.currentThread()));
 		
 		
-		out.println( "--------------5-------------");
-		Observable.create(onSub)
-		        .subscribeOn(Schedulers.newThread()) // 里面会创建一个新的Observable对应新的计划(onSub)，新计划的call调用scheduler的work线程上 执行原计划
-		        .subscribeOn(Schedulers.newThread()) 
-		        //.subscribeOn(Schedulers.newThread())
-		        .observeOn(Schedulers.newThread())
-				.subscribe(arg_i->logThread(arg_i, Thread.currentThread())); // 调用了subsribe 最外层的Observale对象就会调用计划onSub.call 
+//		out.println( "--------------5-------------");
+//		Observable.create(onSub)
+//		        .subscribeOn(Schedulers.newThread()) // 里面会创建一个新的Observable对应新的计划(onSub)，新计划的call调用scheduler的work线程上 执行原计划
+//		        .subscribeOn(Schedulers.newThread()) 
+//		        //.subscribeOn(Schedulers.newThread())
+//		        .observeOn(Schedulers.newThread())
+//				.subscribe(arg_i->logThread(arg_i, Thread.currentThread())); // 调用了subsribe 最外层的Observale对象就会调用计划onSub.call 
+		
+		Integer arrays[] = {1,2,3,4}; 
+		Observable.from( arrays )  // array给到OnSubscribeFromArray计划中  然后 OnSubscribeFromArray.call相当于实现了三次 subsribe.onNext() onNext() onNext() 最后onComplete
+			//.subscribeOn(Schedulers.newThread()) 
+			.subscribe( arg_i-> out.println("观察者 调用一次 onNext  Observable from " + arg_i),
+						error-> out.println("观察者 调用一次 onError  Observable from " + error.getMessage() ),
+						()-> out.println("观察者  调用一次  Complete ")
+					);
+		
+		// 等效例子
+		class ArraysOnSubsribe<T> implements Observable.OnSubscribe<T>{
+			
+			private T[] array ; 
+			
+			public ArraysOnSubsribe(T[] array ){
+				this.array = array ;
+			}
+			
+			@Override
+			public void call(Subscriber<? super T> t) {
+				for(T item: array) {
+					t.onNext( item );
+				}
+				t.onCompleted(); 
+			}
+		}
+		
+		Observable.create( new ArraysOnSubsribe<Integer>(arrays) )
+		.subscribe( arg_i-> out.println("[自定义ArraysOnSubsribe] 观察者 调用一次 onNext  Observable from " + arg_i),
+					error-> out.println("[自定义ArraysOnSubsribe] 观察者 调用一次 onError  Observable from " + error.getMessage() ),
+					()-> out.println("[自定义ArraysOnSubsribe] 观察者  调用一次  Complete ")
+				);
+		
 		
 //		try {
 //			Thread.sleep(2000);
