@@ -37,6 +37,9 @@ public class RxMapTest {
 					new MapObservable<Integer,String>(obserInt,
 							new MyOperator<String,Integer>() {
 	
+								// 参考图片: http://blog.csdn.net/xmxkf/article/details/51791120
+								//
+						
 								// 返回的 Subsriber 订阅  原来的计划/任务
 								// 拦截原始Observable(计划/任务)发射的数据
 								// 新生成的Observable就相当于一个代理，它拦截原始Observable发射的数据，然后对数据做一些处理，再发射给观察者
