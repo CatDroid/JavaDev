@@ -1,5 +1,15 @@
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import rx.Observable;
 import rx.Subscriber;
+import rx.schedulers.Schedulers;
+
+import static java.lang.System.out;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader; 
 
 public class RxSimpleTest {
 
@@ -13,6 +23,7 @@ public class RxSimpleTest {
 		Observable<Integer> obs = Observable.create(new Observable.OnSubscribe<Integer>() {
 		    @Override
 		    public void call(Subscriber<? super Integer> subscriber) {
+		    	out.println("OnSubscribe call = " + Thread.currentThread().getName() );
 		        try{
 		            for(int data : datas){
 		                if (!subscriber.isUnsubscribed())  subscriber.onNext(data);
@@ -31,9 +42,48 @@ public class RxSimpleTest {
 		
 		datas[1] = 2 ; // OK
 		//datas = new int[]{1,2,3,4};  // Error
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		out.println("start time:" + sdf.format(new Date()));
+		
+		obs.subscribeOn( Schedulers.newThread() )
+		    .observeOn( Schedulers.immediate() ) // 这个跟之前同个线程
+		    .subscribe(
+		    		new Subscriber<Integer>() {
+				        @Override
+				        public void onCompleted() {
+				    		out.println("onCompleted");
+		
+				        }
+				        @Override
+				        public void onError(Throwable e) {
+				        	out.println("onError:"+e.getMessage());
+				        }
+				        @Override
+				        public void onNext(Integer integer) {
+				        	out.println("subsriber onNext = " + Thread.currentThread().getName() );
+				        	out.println("onNext:"+integer+" time:"+sdf.format(new Date()));
+				        }
+		    		}
+		    );
 
+		
+		// 等待用户输入 
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));  
+        String str=null;  
+        try {
+        	out.println("wait for exit or quit");
+			while((str=br.readLine())!=null)  
+			{   
+			    if(str.equals("quit") || str.equals("exit") ) {
+			    	return ;
+			    }else {
+			    	out.println("input:"+str);
+			    }
+			}
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		 
 	}
-
-	
-	
 }

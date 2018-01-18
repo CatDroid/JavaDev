@@ -37,13 +37,16 @@ public class RxMapTest {
 					new MapObservable<Integer,String>(obserInt,
 							new MyOperator<String,Integer>() {
 	
-								// 返回的 Subsriber给到 包含在内的 obserInt 原来的计划 
+								// 返回的 Subsriber 订阅  原来的计划/任务
+								// 拦截原始Observable(计划/任务)发射的数据
+								// 新生成的Observable就相当于一个代理，它拦截原始Observable发射的数据，然后对数据做一些处理，再发射给观察者
 								@Override
 								public Subscriber<? super Integer> call(Subscriber<? super String> subscriber) {
 									out.println("MyOperator call "); // 只调用了一次 
 									return new Subscriber<Integer>() {  
 										            @Override
 										            public void onNext(Integer integer) {
+										            	// 这里做了转换!!
 										                subscriber.onNext("MyMap-" + integer);
 										            }
 								
