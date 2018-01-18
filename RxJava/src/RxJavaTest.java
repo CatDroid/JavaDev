@@ -66,7 +66,8 @@ public class RxJavaTest {
 		
 //		out.println( "--------------3-------------");
 //		Observable.create(onSub)
-//			.subscribeOn(Schedulers.newThread())
+//			.subscribeOn(Schedulers.newThread()) // subscribeOn影响之前创建的计划
+//			.observeOn(Schedulers.newThread() )  // observerOn影响之后的观察者  如果不加这个的话 subsribe运行在跟onSub计划同一个线程
 //			.subscribe(arg_i->logThread(arg_i, Thread.currentThread()));
 	
 		
@@ -85,127 +86,48 @@ public class RxJavaTest {
 //		        .observeOn(Schedulers.newThread())
 //				.subscribe(arg_i->logThread(arg_i, Thread.currentThread())); // 调用了subsribe 最外层的Observale对象就会调用计划onSub.call 
 		
-		Integer arrays[] = {1,2,3,4}; 
-		Observable.from( arrays )  // array给到OnSubscribeFromArray计划中  然后 OnSubscribeFromArray.call相当于实现了三次 subsribe.onNext() onNext() onNext() 最后onComplete
-			//.subscribeOn(Schedulers.newThread()) 
-			.subscribe( arg_i-> out.println("观察者 调用一次 onNext  Observable from " + arg_i),
-						error-> out.println("观察者 调用一次 onError  Observable from " + error.getMessage() ),
-						()-> out.println("观察者  调用一次  Complete ")
-					);
 		
-		// 等效例子
-		class ArraysOnSubsribe<T> implements Observable.OnSubscribe<T>{
+		{
+			Integer arrays[] = {1,2,3,4}; 
+			Observable.from( arrays )  // array给到OnSubscribeFromArray计划中  然后 OnSubscribeFromArray.call相当于实现了三次 subsribe.onNext() onNext() onNext() 最后onComplete
+				//.subscribeOn(Schedulers.newThread()) 
+				.subscribe( arg_i-> out.println("观察者 调用一次 onNext  Observable from " + arg_i),
+							error-> out.println("观察者 调用一次 onError  Observable from " + error.getMessage() ),
+							()-> out.println("观察者  调用一次  Complete ")
+						);
 			
-			private T[] array ; 
-			
-			public ArraysOnSubsribe(T[] array ){
-				this.array = array ;
-			}
-			
-			@Override
-			public void call(Subscriber<? super T> t) {
-				for(T item: array) {
-					t.onNext( item );
+			// 等效例子
+			class ArraysOnSubsribe<T> implements Observable.OnSubscribe<T>{
+				
+				private T[] array ; 
+				
+				public ArraysOnSubsribe(T[] array ){
+					this.array = array ;
 				}
-				t.onCompleted(); 
+				
+				@Override
+				public void call(Subscriber<? super T> t) {
+					for(T item: array) {
+						t.onNext( item );
+					}
+					t.onCompleted(); 
+				}
 			}
+			
+			Observable.create( new ArraysOnSubsribe<Integer>(arrays) )
+			.subscribe( arg_i-> out.println("[自定义ArraysOnSubsribe] 观察者 调用一次 onNext  Observable from " + arg_i),
+						error-> out.println("[自定义ArraysOnSubsribe] 观察者 调用一次 onError  Observable from " + error.getMessage() ),
+						()-> out.println("[自定义ArraysOnSubsribe] 观察者  调用一次  Complete ")
+					);
+			
 		}
 		
-		Observable.create( new ArraysOnSubsribe<Integer>(arrays) )
-		.subscribe( arg_i-> out.println("[自定义ArraysOnSubsribe] 观察者 调用一次 onNext  Observable from " + arg_i),
-					error-> out.println("[自定义ArraysOnSubsribe] 观察者 调用一次 onError  Observable from " + error.getMessage() ),
-					()-> out.println("[自定义ArraysOnSubsribe] 观察者  调用一次  Complete ")
-				);
-		
-		
-//		try {
-//			Thread.sleep(2000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		out.println( "....>....");
-		//ob.subscribe(arg_i->logThread(arg_i, Thread.currentThread()));
-//		out.println( "....<....");
-//		
-		
+
 //		out.println( "--------------6-------------");
 //		Observable.interval(100, TimeUnit.MILLISECONDS)
 //		        .take(2)
 //		        .subscribe(arg_i->logThread(arg_i, Thread.currentThread()));
 		
-//		{
-//			Observable.just(1,2,3)
-//			.map( (Integer in) -> { // Func1  有参数   有返回值(与Action1区别) 
-//				switch(in) {
-//				case 1:
-//					return "111" ; 
-//				case 2:
-//					return "222" ;
-//				case 3:
-//					return "333";
-//				default:
-//					return "000";
-//				}
-//			} ).subscribe((String o )->{  out.println( "变换事件的参数类型 --->" + o ); });
-//			
-//			Integer[] array = new Integer[] {1,2,3,4};
-//			Observable.from(array).map( (Integer in)->{ //  map() 是一对一的转化，
-//				switch(in) {
-//				case 1:
-//					return "111";
-//				case 2:
-//					return "222";
-//				case 3:
-//					return "333";
-//				case 4:
-//					return "444";
-//				default:
-//					return "000";
-//				}
-//			}).subscribe((String o )->{  out.println( "变换事件的参数类型 --->" + o ); });
-//			
-//		}
-	
-		{
-			
-			/*
-					RxJava 都不建议开发者自定义 Operator 来直接使用 lift() 
-					而是建议尽量使用已有的 lift() 包装方法(如 map() flatMap() 等)进行组合来实现需求 
-					因为直接使用 lift(),非常容易发生一些难以发现的错误
-			 * */
-			Observable<Integer> observable = Observable.from(new Integer[] {1,2,3,4,5});
-			observable.lift(new Observable.Operator<String, Integer>() {
-				
-				// Operator只是 extends Func1,  这里 的 call就是Func1的接口 
-				// lift会创建新的Observable和 对应新的事件 OnSubscribeLift返回     下面的call其实就是新的事件!
-			    @Override
-			    public Subscriber<? super Integer> call(final Subscriber<? super String> subscriber) {
-			       
-			        return new Subscriber<Integer>() { // 将事件序列中的 Integer 对象转换为 String 对象
-			            @Override
-			            public void onNext(Integer integer) {
-			            	out.println("Inner Subscriber " + integer );
-			                subscriber.onNext("T" + integer);
-			            }
-
-			            @Override
-			            public void onCompleted() {
-			                subscriber.onCompleted();
-			            }
-
-			            @Override
-			            public void onError(Throwable e) {
-			                subscriber.onError(e);
-			            }
-			        };
-			    }
-			    
-			    
-			}).subscribe( (String s)-> out.println("Target Subscriber " + s )   ) ;
-		}
-		
-
 		
 		// 写在这里避免主进程退出了
 		try {
